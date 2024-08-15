@@ -1,11 +1,11 @@
 # Installed Library
 
-pillow - https://pypi.org/project/pillow
+PILLOW - https://pypi.org/project/pillow
 
-luma.core - https://pypi.org/project/luma.core
+LUMA.CORE - https://pypi.org/project/luma.core
 
 pyFluidSynth - https://pypi.org/project/pyFluidSynth
 
-odroid-wiringpi - https://pypi.org/project/odroid-wiringpi
+Odroid-Wiringpi - https://pypi.org/project/odroid-wiringpi
 
-pcf8574 - https://pypi.org/project/pcf8574
+PCF8574 - https://pypi.org/project/pcf8574
