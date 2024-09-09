@@ -82,12 +82,11 @@ int readButtonStates() {
 }
 
 int getPressedTone(uint8_t buttonStates, int offset) {
-  Serial.print("Button States: ");
-  Serial.println(buttonStates, BIN); // Print the binary value of buttonStates
-  
   for (uint8_t i = 0; i < 8; i++) {
     // Check if the button is pressed (LOW state)
     if (!(buttonStates & (1 << i))) {
+      Serial.print("Button States: ");
+      Serial.println(buttonStates, BIN); // Print the binary value of buttonStates
       Serial.print("Pressed: ");
       Serial.println(buttonNames[i + offset]);  // Print the corresponding key name
       return buttonTones[i + offset];  // Return the tone for the detected button press
