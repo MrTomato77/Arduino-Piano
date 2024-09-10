@@ -3,7 +3,7 @@
 #include "metronome.h"
 
 #define SPEAKER_PIN 8
-#define PCF8574_ADDRESS 0x20
+#define PCF8574_ADDRESS1 0x20
 #define PCF8574_ADDRESS2 0x21
 #define DEBOUNCE_DELAY 10  // Debounce delay in milliseconds
 
@@ -20,8 +20,8 @@ const char* buttonNames[] = {
 };
 
 const int numTones = sizeof(buttonTones) / sizeof(buttonTones[0]);
-uint8_t lastButtonStates1 = 0xFF;  // Keep track of previous button states for PCF8574_1
-uint8_t lastButtonStates2 = 0xFF;  // Keep track of previous button states for PCF8574_2
+uint8_t lastButtonStates1 = 0xFF; // Initial states for PCF8574_1 (all high, no buttons pressed)
+uint8_t lastButtonStates2 = 0xFF; // Initial states for PCF8574_2 (all high, no buttons pressed)
 
 void setup() {
   Serial.begin(38400);
@@ -29,13 +29,15 @@ void setup() {
   pinMode(SPEAKER_PIN, OUTPUT);
 
   // Set all PCF8574 pins as inputs with pull-up
-  Wire.beginTransmission(PCF8574_ADDRESS);
+  Wire.beginTransmission(PCF8574_ADDRESS1);
   Wire.write(0xFF); // Set all pins HIGH to enable internal pull-ups
   Wire.endTransmission();
 
   Wire.beginTransmission(PCF8574_ADDRESS2);
   Wire.write(0xFF); // Set all pins HIGH to enable internal pull-ups
   Wire.endTransmission();
+
+  
 
   // Initialize metronome
   setupMetronome();
@@ -62,11 +64,15 @@ int readButtonStates() {
   int pitch = 0;
 
   // Read the button states from PCF8574_1
-  Wire.requestFrom(PCF8574_ADDRESS, 1);
+  Wire.requestFrom(PCF8574_ADDRESS1, 1);
   if (Wire.available()) {
     uint8_t currentButtonStates1 = Wire.read(); // Read the byte from PCF8574_1
     if (debounce(currentButtonStates1, lastButtonStates1, currentTime)) {
-      pitch = getPressedTone(currentButtonStates1, 0); // Get the tone for the pressed button from PCF8574_1
+      int tone1 = getPressedTone(currentButtonStates1, 0); // Get the tone for the pressed button from PCF8574_1
+      if (tone1 > 0) {
+        pitch = tone1; // Set pitch only if a valid button is pressed
+      }
+      lastButtonStates1 = currentButtonStates1; // Update last button states for debouncing
     }
   }
 
@@ -75,11 +81,17 @@ int readButtonStates() {
   if (Wire.available()) {
     uint8_t currentButtonStates2 = Wire.read(); // Read the byte from PCF8574_2
     if (debounce(currentButtonStates2, lastButtonStates2, currentTime)) {
-      pitch = getPressedTone(currentButtonStates2, 8); // Get the tone for the pressed button from PCF8574_2
+      int tone2 = getPressedTone(currentButtonStates2, 8); // Get the tone for the pressed button from PCF8574_2
+      if (tone2 > 0) {
+        pitch = tone2; // Update pitch if a valid button is pressed from PCF8574_2
+      }
+      lastButtonStates2 = currentButtonStates2; // Update last button states for debouncing
     }
   }
+
   return pitch;
 }
+
 
 int getPressedTone(uint8_t buttonStates, int offset) {
   for (uint8_t i = 0; i < 8; i++) {
