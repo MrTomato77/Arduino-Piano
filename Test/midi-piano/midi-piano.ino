@@ -26,24 +26,26 @@ void setup() {
   PCF3.begin();
 }
 
-void playNoteOnBuzzer(int note) {
-  tone(BUZZER_PIN, note);
+void playNoteOnBuzzer(int midiNote) {
+  Note noteInfo = getNoteInfo(midiNote);
+  if (noteInfo.frequency > 0) {
+    tone(BUZZER_PIN, noteInfo.frequency);
+  } else {
+    noTone(BUZZER_PIN);
+  }
 }
-
 void stopNoteOnBuzzer() {
   noTone(BUZZER_PIN);
 }
 
-const char* noteNames[] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-void printNoteName(int note) {
-  int baseNote = 21;
-  int noteIndex = note - baseNote;
-  int noteInOctave = noteIndex % 12;
-  int noteOctave = (noteIndex / 12);
-  if (noteInOctave >= 0 && noteInOctave < 12) {
-    Serial.print(noteNames[noteInOctave]);
-    Serial.print(noteOctave);
-    Serial.println();
+// Function to print note names based on MIDI note number
+void printNoteName(int midiNote) {
+  Note noteInfo = getNoteInfo(midiNote);
+  if (noteInfo.frequency > 0) {
+    Serial.print("Note: ");
+    Serial.print(noteInfo.name);
+    Serial.print(", Frequency: ");
+    Serial.println(noteInfo.frequency);
   } else {
     Serial.println("Invalid note");
   }
@@ -57,13 +59,10 @@ void checkKey1(int key) {
   if (buttonIsPressed != ButtonWasPressed1[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed1[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int note = 21 + (12 * octave) + key;  // Adjust for octave and key
+    int midiNote = 1 + (12 * (octave - 1) ) + key;  // Adjust for octave and key
     if (ButtonWasPressed1[key]) {
-      Serial.print("Playing note: ");
-      Serial.print(note);
-      Serial.print(" - ");
-      printNoteName(note);
-      playNoteOnBuzzer(note);
+      printNoteName(midiNote);
+      playNoteOnBuzzer(midiNote);
     } else {
       stopNoteOnBuzzer();
     }
@@ -78,13 +77,10 @@ void checkKey2(int key) {
   if (buttonIsPressed != ButtonWasPressed2[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed2[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int note = 33 + (12 * octave) + key;  // Adjust for octave and key
+    int midiNote = 9 + (12 * (octave - 1) ) + key;;  // Adjust for octave and key
     if (ButtonWasPressed2[key]) {
-      Serial.print("Playing note: ");
-      Serial.print(note);
-      Serial.print(" - ");
-      printNoteName(note);
-      playNoteOnBuzzer(note);
+      playNoteOnBuzzer(midiNote);
+      printNoteName(midiNote);  // Print corresponding note name
     } else {
       stopNoteOnBuzzer();
     }
@@ -99,13 +95,10 @@ void checkKey3(int key) {
   if (buttonIsPressed != ButtonWasPressed3[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed3[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int note = 45 + (12 * octave) + key;  // Adjust for octave and key
+    int midiNote = 17 + (12 * (octave - 1) ) + key;;  // Adjust for octave and key
     if (ButtonWasPressed3[key]) {
-      Serial.print("Playing note: ");
-      Serial.print(note);
-      Serial.print(" - ");
-      printNoteName(note);
-      playNoteOnBuzzer(note);
+      playNoteOnBuzzer(midiNote);
+      printNoteName(midiNote);  // Print corresponding note name
     } else {
       stopNoteOnBuzzer();
     }
@@ -113,7 +106,7 @@ void checkKey3(int key) {
 }
 
 void loop() {
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; ++i) {
     checkKey1(i);
     checkKey2(i);
     checkKey3(i);
