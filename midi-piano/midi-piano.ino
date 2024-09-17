@@ -7,14 +7,12 @@
 // Pin definitions
 #define BUZZER_PIN 8
 
-// Midi
+// Midi init
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 boolean ButtonWasPressed1[] = { false, false, false, false, false, false, false, false };
 boolean ButtonWasPressed2[] = { false, false, false, false, false, false, false, false };
 boolean ButtonWasPressed3[] = { false, false, false, false, false, false, false, false };
-
-
 
 PCF8574 PCF1(0x20);
 PCF8574 PCF2(0x21);
@@ -42,6 +40,7 @@ void playNoteOnBuzzer(int buzzerNote) {
     noTone(BUZZER_PIN);
   }
 }
+
 void stopNoteOnBuzzer() {
   noTone(BUZZER_PIN);
 }
@@ -66,7 +65,7 @@ void checkKey1(int key) {
   if (buttonIsPressed != ButtonWasPressed1[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed1[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int buzzerNote = 1 + (12 * getCurrentOctave() ) + key;
+    int buzzerNote = 1 + (12 * getCurrentOctave()) + key;
     int midiNote = 24 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed1[key]) {
       // printBuzzerNote(buzzerNote);
@@ -88,7 +87,7 @@ void checkKey2(int key) {
   if (buttonIsPressed != ButtonWasPressed2[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed2[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int buzzerNote = 9 + (12 * getCurrentOctave() ) + key;
+    int buzzerNote = 9 + (12 * getCurrentOctave()) + key;
     int midiNote = 32 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed2[key]) {
       // printBuzzerNote(buzzerNote);
@@ -110,7 +109,7 @@ void checkKey3(int key) {
   if (buttonIsPressed != ButtonWasPressed3[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed3[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int buzzerNote = 17 + (12 * getCurrentOctave() ) + key;
+    int buzzerNote = 17 + (12 * getCurrentOctave()) + key;
     int midiNote = 40 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed3[key]) {
       // printBuzzerNote(buzzerNote);
