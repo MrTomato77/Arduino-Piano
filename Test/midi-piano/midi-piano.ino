@@ -1,5 +1,6 @@
 #include <PCF8574.h>
 #include "pitches.h"
+#include "octate.h"
 
 // Pin definitions
 #define BUZZER_PIN 8
@@ -19,6 +20,7 @@ void setupPinMode() {
 }
 
 void setup() {
+  setupOctaveButtons();
   setupPinMode();
   Serial.begin(115200);
   PCF1.begin();
@@ -59,7 +61,7 @@ void checkKey1(int key) {
   if (buttonIsPressed != ButtonWasPressed1[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed1[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int midiNote = 1 + (12 * (octave - 1) ) + key;  // Adjust for octave and key
+    int midiNote = 1 + (12 * getCurrentOctave()) + key;  // Adjust for octave and key
     if (ButtonWasPressed1[key]) {
       printNoteName(midiNote);
       playNoteOnBuzzer(midiNote);
@@ -77,10 +79,10 @@ void checkKey2(int key) {
   if (buttonIsPressed != ButtonWasPressed2[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed2[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int midiNote = 9 + (12 * (octave - 1) ) + key;;  // Adjust for octave and key
+    int midiNote = 9 + (12 * getCurrentOctave()) + key;  // Adjust for octave and key
     if (ButtonWasPressed2[key]) {
       playNoteOnBuzzer(midiNote);
-      printNoteName(midiNote);  // Print corresponding note name
+      printNoteName(midiNote);
     } else {
       stopNoteOnBuzzer();
     }
@@ -95,10 +97,10 @@ void checkKey3(int key) {
   if (buttonIsPressed != ButtonWasPressed3[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed3[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int midiNote = 17 + (12 * (octave - 1) ) + key;;  // Adjust for octave and key
+    int midiNote = 17 + (12 * getCurrentOctave()) + key;  // Adjust for octave and key
     if (ButtonWasPressed3[key]) {
       playNoteOnBuzzer(midiNote);
-      printNoteName(midiNote);  // Print corresponding note name
+      printNoteName(midiNote);
     } else {
       stopNoteOnBuzzer();
     }
@@ -106,6 +108,7 @@ void checkKey3(int key) {
 }
 
 void loop() {
+  checkOctaveButtons();
   for (int i = 0; i < 8; ++i) {
     checkKey1(i);
     checkKey2(i);
