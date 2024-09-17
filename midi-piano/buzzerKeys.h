@@ -98,17 +98,6 @@ BuzzerNote getBuzzerNoteInfo(int midiNote) {
         case 83: noteInfo = {3729, "A#7"}; break;
         case 84: noteInfo = {3951, "B7"}; break;
         case 85: noteInfo = {4186, "C8"}; break;
-        case 86: noteInfo = {4435, "C#8"}; break;
-        case 87: noteInfo = {4699, "D8"}; break;
-        case 88: noteInfo = {4978, "D#8"}; break;
-        case 89: noteInfo = {5274, "E8"}; break;
-        case 90: noteInfo = {5588, "F8"}; break;
-        case 91: noteInfo = {5919, "F#8"}; break;
-        case 92: noteInfo = {6271, "G8"}; break;
-        case 93: noteInfo = {6644, "G#8"}; break;
-        case 94: noteInfo = {7040, "A8"}; break;
-        case 95: noteInfo = {7458, "A#8"}; break;
-        case 96: noteInfo = {7902, "B8"}; break;
         default: noteInfo = {0, "Unknown"}; // Return 0 and "Unknown" if note is out of range
     }
     return noteInfo;

@@ -1,5 +1,6 @@
 #include <PCF8574.h>
 #include <MIDI.h>
+#include "OCTAVE.h"
 #include "buzzerKeys.h"
 #include "midiKeys.h"
 
@@ -13,7 +14,7 @@ boolean ButtonWasPressed1[] = { false, false, false, false, false, false, false,
 boolean ButtonWasPressed2[] = { false, false, false, false, false, false, false, false };
 boolean ButtonWasPressed3[] = { false, false, false, false, false, false, false, false };
 
-int octave = 2;
+
 
 PCF8574 PCF1(0x20);
 PCF8574 PCF2(0x21);
@@ -25,6 +26,7 @@ void setupPinMode() {
 
 void setup() {
   setupPinMode();
+  setupOctaveButtons();
   MIDI.begin(MIDI_CHANNEL_OMNI);
   Serial.begin(115200);
   PCF1.begin();
@@ -64,8 +66,8 @@ void checkKey1(int key) {
   if (buttonIsPressed != ButtonWasPressed1[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed1[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int buzzerNote = 1 + (12 * (octave - 1) ) + key;
-    int midiNote = 24 + (12 * (octave - 1)) + key;;
+    int buzzerNote = 1 + (12 * getCurrentOctave() ) + key;
+    int midiNote = 24 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed1[key]) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
@@ -86,8 +88,8 @@ void checkKey2(int key) {
   if (buttonIsPressed != ButtonWasPressed2[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed2[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int buzzerNote = 9 + (12 * (octave - 1) ) + key;
-    int midiNote = 32 + (12 * (octave - 1)) + key;;
+    int buzzerNote = 9 + (12 * getCurrentOctave() ) + key;
+    int midiNote = 32 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed2[key]) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
@@ -108,8 +110,8 @@ void checkKey3(int key) {
   if (buttonIsPressed != ButtonWasPressed3[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
     ButtonWasPressed3[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
-    int buzzerNote = 17 + (12 * (octave - 1) ) + key;
-    int midiNote = 40 + (12 * (octave - 1)) + key;;
+    int buzzerNote = 17 + (12 * getCurrentOctave() ) + key;
+    int midiNote = 40 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed3[key]) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
@@ -123,6 +125,7 @@ void checkKey3(int key) {
 }
 
 void loop() {
+  checkOctaveButtons();
   for (int i = 0; i < 8; ++i) {
     checkKey1(i);
     checkKey2(i);
