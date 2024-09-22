@@ -3,7 +3,7 @@ import smbus2
 import serial
 
 # Set up I2C communication with the LCD
-I2C_LCD_ADDR = 0x23  # Address of the I2C LCD
+I2C_LCD_ADDR = 0x27  # Address of the I2C LCD
 LCD_WIDTH = 16    # Maximum characters per line
 
 # LCD commands
