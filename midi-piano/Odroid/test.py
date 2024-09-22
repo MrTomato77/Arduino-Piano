@@ -1,16 +1,13 @@
-from lcd_i2c import CharLCD
+from luma.core.interface.serial import i2c
+from luma.lcd import CharLCD
 import time
 
-# Create an instance of the CharLCD class
-lcd = CharLCD(i2c_addr=0x27, cols=16, rows=2)  # Adjust I2C address if needed
+serial = i2c(port=1, address=0x27)
+lcd = CharLCD(serial, width=16, height=2)
 
-# Clear the display
 lcd.clear()
+lcd.text('hola', 0, 0)
 
-# Display "hola"
-lcd.message('hola')
-
-# Keep the program running
 try:
     while True:
         time.sleep(1)
