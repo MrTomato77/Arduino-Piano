@@ -1,11 +1,14 @@
+#pip install RPi.GPIO
+
+
+import RPi.GPIO as GPIO
 import time
-import ODROID.GPIO as GPIO
 
 # กำหนดหมายเลข pin ที่เชื่อมต่อกับ buzzer
 BUZZER_PIN = 18
 
 # ตั้งค่า pin เป็นโหมด output
-GPIO.setmode(GPIO.BOARD)  # หรือ GPIO.BCM ขึ้นอยู่กับการเรียกหมายเลข pin
+GPIO.setmode(GPIO.BOARD)  # หรือใช้ GPIO.BCM ตามการเรียกหมายเลข pin
 GPIO.setup(BUZZER_PIN, GPIO.OUT)
 
 # Function สำหรับทำให้ buzzer ส่งเสียง
