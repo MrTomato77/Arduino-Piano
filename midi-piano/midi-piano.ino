@@ -29,6 +29,8 @@ void setup() {
   PCF1.begin();
   PCF2.begin();
   PCF3.begin();
+  setupLCD();
+  displayOctave(getCurrentOctave());
 }
 
 void playNoteOnBuzzer(int buzzerNote) {
