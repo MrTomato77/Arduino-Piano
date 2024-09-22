@@ -1,49 +1,101 @@
-import smbus2
 import time
-from RPLCD.i2c import CharLCD
+import smbus2
+import serial
 
-# Define I2C addresses
-I2C_ARDUINO_ADDRESS = 0x08  # Arduino I2C address
+# Set up I2C communication with the LCD
+I2C_LCD_ADDR = 0x23  # Address of the I2C LCD
+LCD_WIDTH = 16    # Maximum characters per line
 
-# Initialize I2C (smbus) - Bus 1 is for ODROID C4
-bus = smbus2.SMBus(1)
+# LCD commands
+LCD_CHR = 1  # Mode - Sending data
+LCD_CMD = 0  # Mode - Sending command
 
-# Initialize the I2C LCD
-lcd = CharLCD('PCF8574', 0x23, bus=1, cols=16, rows=2)
+LCD_LINE_1 = 0x80  # LCD RAM address for the 1st line
+LCD_LINE_2 = 0xC0  # LCD RAM address for the 2nd line
 
-def read_arduino():
-    """Read data from the Arduino over I2C"""
+LCD_BACKLIGHT = 0x08  # On
+ENABLE = 0b00000100  # Enable bit
+
+# Timing constants
+E_PULSE = 0.0005
+E_DELAY = 0.0005
+
+# Initialize Serial communication with Arduino
+bus = smbus2.SMBus(1)  # Initialize I2C bus (1 indicates the correct bus for ODROID)
+port = '/dev/ttyS1'  # Replace with the correct port
+baudrate = 115200
+uno = serial.Serial(port, baudrate, timeout=1)
+
+def lcd_init():
+    """Initialize LCD display."""
+    lcd_byte(0x33, LCD_CMD)  # 110011 Initialize
+    lcd_byte(0x32, LCD_CMD)  # 110010 Initialize
+    lcd_byte(0x06, LCD_CMD)  # Cursor move direction
+    lcd_byte(0x0C, LCD_CMD)  # Turn cursor off
+    lcd_byte(0x28, LCD_CMD)  # 2 line display
+    lcd_byte(0x01, LCD_CMD)  # Clear display
+    time.sleep(E_DELAY)
+
+def lcd_byte(bits, mode):
+    """Send byte to data pins."""
+    bits_high = mode | (bits & 0xF0) | LCD_BACKLIGHT
+    bits_low = mode | ((bits << 4) & 0xF0) | LCD_BACKLIGHT
+
+    bus.write_byte(I2C_LCD_ADDR, bits_high)
+    lcd_toggle_enable(bits_high)
+
+    bus.write_byte(I2C_LCD_ADDR, bits_low)
+    lcd_toggle_enable(bits_low)
+
+def lcd_toggle_enable(bits):
+    """Toggle enable pin."""
+    time.sleep(E_DELAY)
+    bus.write_byte(I2C_LCD_ADDR, (bits | ENABLE))
+    time.sleep(E_PULSE)
+    bus.write_byte(I2C_LCD_ADDR, (bits & ~ENABLE))
+    time.sleep(E_DELAY)
+
+def lcd_string(message, line):
+    """Send string to display."""
+    message = message.ljust(16, " ")  # Pad string with spaces if shorter than 16 characters
+    lcd_byte(line, LCD_CMD)
+
+    for i in range(16):
+        lcd_byte(ord(message[i]), LCD_CHR)
+
+def receive_data_from_arduino():
+    """Read BPM, Octave, and Note from Arduino."""
     try:
-        # Arduino sends 3 bytes: BPM, Octave, Note
-        data = bus.read_i2c_block_data(I2C_ARDUINO_ADDRESS, 0, 3)
-        bpm = data[0]      # First byte: BPM
-        octave = data[1]   # Second byte: Octave
-        note = data[2]     # Third byte: Note
-        return bpm, octave, note
+        # Wait for serial data from Arduino
+        data = uno.readline().decode('utf-8').strip()
+        if data:
+            # Split data assuming it comes in "BPM,Octave,Note" format
+            bpm, octave, note = data.split(',')
+            return int(bpm), int(octave), note
     except Exception as e:
-        print(f"Error reading from Arduino: {e}")
-        return None, None, None
+        print(f"Error reading data: {e}")
+    return None, None, None
 
-def update_lcd(bpm, octave, note):
-    """Update the LCD display with BPM, Octave, and Note"""
-    lcd.clear()  # Clear the display before writing
-    lcd.write_string(f"BPM: {bpm}\nOctave: {octave} Note: {note}")
+def display_data_on_lcd(bpm, octave, note):
+    """Display BPM, Octave, and Note on the LCD."""
+    lcd_string(f"BPM: {bpm}", LCD_LINE_1)
+    lcd_string(f"Oct: {octave} Note: {note}", LCD_LINE_2)
 
 def main():
-    # Initialize the LCD
-    lcd.clear()
-    
+    """Main loop to handle data reading and LCD output."""
+    lcd_init()  # Initialize the LCD
+
     while True:
-        # Read values from Arduino
-        bpm, octave, note = read_arduino()
-        if bpm is not None and octave is not None and note is not None:
-            print(f"Received - BPM: {bpm}, Octave: {octave}, Note: {note}")
-            # Update the LCD
-            update_lcd(bpm, octave, note)
+        # Receive data from Arduino
+        bpm, octave, note = receive_data_from_arduino()
+
+        if bpm is not None and octave is not None and note:
+            print(f"Received -> BPM: {bpm}, Octave: {octave}, Note: {note}")
+            display_data_on_lcd(bpm, octave, note)
         else:
-            print("No valid data received.")
+            print("Waiting for data...")
         
-        time.sleep(1)  # Check for updates every second
+        time.sleep(1)  # Polling delay
 
 if __name__ == "__main__":
     main()
