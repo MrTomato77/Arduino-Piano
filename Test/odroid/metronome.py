@@ -1,27 +1,34 @@
-#sudo apt-get install python3-rpi.gpio
-#python3 metronome.py
-
-import RPi.GPIO as GPIO
 import time
+import ODROID.GPIO as GPIO
 
-# ตั้งค่า GPIO
-buzzer_pin = 18
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(buzzer_pin, GPIO.OUT)
+# กำหนดหมายเลข pin ที่เชื่อมต่อกับ buzzer
+BUZZER_PIN = 18
 
-# ฟังก์ชัน metronome
-def metronome(bpm):
-    interval = 60 / bpm  # คำนวณเวลาสำหรับแต่ละบีต
-    while True:
-        GPIO.output(buzzer_pin, GPIO.HIGH)  # เปิด buzzer
-        time.sleep(0.1)  # เสียง buzzer ดัง
-        GPIO.output(buzzer_pin, GPIO.LOW)   # ปิด buzzer
-        time.sleep(interval - 0.1)  # รอเวลาที่เหลือ
+# ตั้งค่า pin เป็นโหมด output
+GPIO.setmode(GPIO.BOARD)  # หรือ GPIO.BCM ขึ้นอยู่กับการเรียกหมายเลข pin
+GPIO.setup(BUZZER_PIN, GPIO.OUT)
+
+# Function สำหรับทำให้ buzzer ส่งเสียง
+def buzz(frequency, duration):
+    if frequency == 0:  # หยุดเสียง
+        GPIO.output(BUZZER_PIN, GPIO.LOW)
+        time.sleep(duration)
+        return
+    
+    period = 1.0 / frequency
+    delay = period / 2  # สลับ high และ low ครึ่งหนึ่งของ period
+
+    cycles = int(duration * frequency)  # จำนวนรอบของคลื่นเสียง
+    for _ in range(cycles):
+        GPIO.output(BUZZER_PIN, GPIO.HIGH)  # ส่งสัญญาณ high ไปที่ buzzer
+        time.sleep(delay)
+        GPIO.output(BUZZER_PIN, GPIO.LOW)   # ส่งสัญญาณ low ไปที่ buzzer
+        time.sleep(delay)
 
 try:
-    bpm = 120  # กำหนด BPM (beats per minute)
-    metronome(bpm)
-except KeyboardInterrupt:
-    pass
+    # ทดสอบส่งเสียงที่ 1000 Hz นาน 2 วินาที
+    buzz(1000, 2)
+
 finally:
+    # ทำความสะอาด GPIO
     GPIO.cleanup()
