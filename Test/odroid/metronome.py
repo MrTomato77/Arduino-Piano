@@ -1,20 +1,28 @@
+import sys
+from time import sleep
 import odroid_wiringpi as wpi
-import time
 
-# ตั้งค่า
-PIN = 18  # เปลี่ยนหมายเลข GPIO ให้ถูกต้อง
+# กำหนดหมายเลขขา GPIO สำหรับควบคุม buzzer
+BUZZER_PIN = 18  # เปลี่ยนเป็นหมายเลข GPIO ที่ต่อกับ buzzer ของคุณ
 
-# เริ่มต้น wiringPi โดยใช้หมายเลขขาแบบ BCM
-wpi.wiringPiSetupGpio()
+# ตั้งค่า WiringPi
+wpi.wiringPiSetupGpio()  # ใช้หมายเลข GPIO แบบ BCM
+wpi.pinMode(BUZZER_PIN, wpi.OUTPUT)  # ตั้งขาเป็นโหมด output
 
-# ตั้งขาเป็นโหมด output
-wpi.pinMode(PIN, wpi.OUTPUT)
+# ลูปเปิดและปิด buzzer เป็นเวลา 10 ครั้ง
+for _ in range(10):
+    # เปิดเสียง buzzer
+    wpi.digitalWrite(BUZZER_PIN, wpi.HIGH)
+    print("Buzzer ON")
+    
+    # รอ 1 วินาที
+    sleep(1)
+    
+    # ปิดเสียง buzzer
+    wpi.digitalWrite(BUZZER_PIN, wpi.LOW)
+    print("Buzzer OFF")
+    
+    # รอ 1 วินาที
+    sleep(1)
 
-# เปิดและปิดขา GPIO 5 ครั้ง
-for i in range(5):
-    wpi.digitalWrite(PIN, wpi.HIGH)  # ตั้งขา HIGH
-    time.sleep(1)
-    wpi.digitalWrite(PIN, wpi.LOW)   # ตั้งขา LOW
-    time.sleep(1)
-
-print("การทดสอบเสร็จสิ้น")
+print("Program has ended")
