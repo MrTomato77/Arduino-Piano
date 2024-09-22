@@ -56,18 +56,6 @@ void stopNoteOnBuzzer() {
   analogWrite(BUZZER_PIN, 0);  // Turn off the PWM signal to ensure silence
 }
 
-void printBuzzerNote(int buzzerNote) {
-  BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
-  if (noteInfo.frequency > 0) {
-    Serial.print("Note: ");
-    Serial.print(noteInfo.name);
-    Serial.print(", Frequency: ");
-    Serial.println(noteInfo.frequency);
-  } else {
-    Serial.println("Invalid note");
-  }
-}
-
 // Function to read and adjust the buzzer volume using the potentiometer
 void adjustBuzzerVolume() {
   // Read the potentiometer value (0-1023)
@@ -79,8 +67,8 @@ void adjustBuzzerVolume() {
   // Only update if the volume change is significant
   if (abs(currentVolume - lastVolumeValue) > volumeThreshold) {
     lastVolumeValue = currentVolume;
-    Serial.print("Adjusted Volume: ");
-    Serial.println(currentVolume);
+    //Serial.print("Adjusted Volume: ");
+    //Serial.println(currentVolume);
   }
 }
 
@@ -95,7 +83,7 @@ void checkKey1(int key) {
     int buzzerNote = 1 + (12 * getCurrentOctave()) + key;
     int midiNote = 24 + (12 * getCurrentOctave()) + key;
     if (ButtonWasPressed1[key]) {
-      printBuzzerNote(buzzerNote);
+      //printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
       delay(200);
@@ -117,7 +105,7 @@ void checkKey2(int key) {
     int buzzerNote = 9 + (12 * getCurrentOctave()) + key;
     int midiNote = 32 + (12 * getCurrentOctave()) + key;
     if (ButtonWasPressed2[key]) {
-      printBuzzerNote(buzzerNote);
+      //printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
       delay(200);
@@ -139,7 +127,7 @@ void checkKey3(int key) {
     int buzzerNote = 17 + (12 * getCurrentOctave()) + key;
     int midiNote = 40 + (12 * getCurrentOctave()) + key;
     if (ButtonWasPressed3[key]) {
-      printBuzzerNote(buzzerNote);
+      //printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
       delay(200);
