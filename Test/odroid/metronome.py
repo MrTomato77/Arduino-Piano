@@ -1,37 +1,38 @@
-#pip install RPi.GPIO
+#pip install odroid-wiringpi
 
-
-import RPi.GPIO as GPIO
+import odroid_wiringpi as wpi
 import time
 
-# กำหนดหมายเลข pin ที่เชื่อมต่อกับ buzzer
-BUZZER_PIN = 18
+# Define the GPIO pin connected to the buzzer
+BUZZER_PIN = 18  # Replace with your specific pin number
 
-# ตั้งค่า pin เป็นโหมด output
-GPIO.setmode(GPIO.BOARD)  # หรือใช้ GPIO.BCM ตามการเรียกหมายเลข pin
-GPIO.setup(BUZZER_PIN, GPIO.OUT)
+# Initialize WiringPi with GPIO numbering
+wpi.wiringPiSetupGpio()
 
-# Function สำหรับทำให้ buzzer ส่งเสียง
+# Set the buzzer pin as an output
+wpi.pinMode(BUZZER_PIN, 1)  # 1 denotes output mode
+
+# Function to make the buzzer sound
 def buzz(frequency, duration):
-    if frequency == 0:  # หยุดเสียง
-        GPIO.output(BUZZER_PIN, GPIO.LOW)
+    if frequency == 0:
+        wpi.digitalWrite(BUZZER_PIN, 0)
         time.sleep(duration)
         return
-    
-    period = 1.0 / frequency
-    delay = period / 2  # สลับ high และ low ครึ่งหนึ่งของ period
 
-    cycles = int(duration * frequency)  # จำนวนรอบของคลื่นเสียง
+    period = 1.0 / frequency
+    delay = period / 2
+    cycles = int(duration * frequency)
+
     for _ in range(cycles):
-        GPIO.output(BUZZER_PIN, GPIO.HIGH)  # ส่งสัญญาณ high ไปที่ buzzer
+        wpi.digitalWrite(BUZZER_PIN, 1)  # Turn buzzer on
         time.sleep(delay)
-        GPIO.output(BUZZER_PIN, GPIO.LOW)   # ส่งสัญญาณ low ไปที่ buzzer
+        wpi.digitalWrite(BUZZER_PIN, 0)  # Turn buzzer off
         time.sleep(delay)
 
 try:
-    # ทดสอบส่งเสียงที่ 1000 Hz นาน 2 วินาที
+    # Test the buzzer at 1000 Hz for 2 seconds
     buzz(1000, 2)
 
 finally:
-    # ทำความสะอาด GPIO
-    GPIO.cleanup()
+    # Clean up by setting the buzzer pin to low
+    wpi.digitalWrite(BUZZER_PIN, 0)
