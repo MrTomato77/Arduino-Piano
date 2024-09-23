@@ -8,11 +8,11 @@ const int buttonIncreasePin = 3;  // Pin for increase button
 const int buttonDecreasePin = 4;  // Pin for decrease button
 
 // Define octave range limits
-const int minOctave = 1;
-const int maxOctave = 8;
+const int minOctave = 0;
+const int maxOctave = 5;
 
 // Variable to store the current octave
-int currentOctave = 0;
+int currentOctave = 2;
 
 // Function to initialize the buttons
 void setupOctaveButtons() {

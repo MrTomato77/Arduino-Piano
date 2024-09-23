@@ -2,7 +2,6 @@
 #include <MIDI.h>
 #include "OCTAVE.h"
 #include "buzzerKeys.h"
-#include "midiKeys.h"
 
 // Pin definitions
 #define BUZZER_PIN 8
@@ -30,6 +29,8 @@ void setup() {
   PCF1.begin();
   PCF2.begin();
   PCF3.begin();
+  setupLCD();
+  displayOctave(getCurrentOctave());
 }
 
 void playNoteOnBuzzer(int buzzerNote) {

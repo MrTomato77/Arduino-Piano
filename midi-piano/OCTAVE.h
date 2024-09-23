@@ -2,6 +2,7 @@
 #define OCTAVE_H
 
 #include <Arduino.h>
+#include "I2C_LCD.h"
 
 // Define pins for buttons
 const int buttonIncreasePin = 3;  // Pin for increase button
@@ -20,6 +21,11 @@ void setupOctaveButtons() {
     pinMode(buttonDecreasePin, INPUT_PULLUP);
 }
 
+// Function to get the current octave value
+int getCurrentOctave() {
+    return currentOctave;
+}
+
 // Function to increase the octave
 void increaseOctave() {
     if (currentOctave < maxOctave) {
@@ -34,24 +40,21 @@ void decreaseOctave() {
     }
 }
 
-// Function to check for button presses
+// Function to check for button presses to increase or decrease octave
 void checkOctaveButtons() {
     // Check if the increase button is pressed
     if (digitalRead(buttonIncreasePin) == LOW) {
-        increaseOctave();
+        increaseOctave();            // Increase the octave
+        displayOctave(getCurrentOctave());  // Update the LCD display with the new octave
         delay(200);  // Debounce delay
     }
 
     // Check if the decrease button is pressed
     if (digitalRead(buttonDecreasePin) == LOW) {
-        decreaseOctave();
+        decreaseOctave();            // Decrease the octave
+        displayOctave(getCurrentOctave());  // Update the LCD display with the new octave
         delay(200);  // Debounce delay
     }
-}
-
-// Function to get the current octave value
-int getCurrentOctave() {
-    return currentOctave;
 }
 
 #endif
