@@ -10,9 +10,9 @@ struct BuzzerNote {
 };
 
 // Function to get the frequency and name of a given buzzer note
-BuzzerNote getBuzzerNoteInfo(int midiNote) {
+BuzzerNote getBuzzerNoteInfo(int Note) {
     BuzzerNote noteInfo;
-    switch (midiNote) {
+    switch (Note) {
         case 1: noteInfo = {33, "C1"}; break;
         case 2: noteInfo = {35, "C#1"}; break;
         case 3: noteInfo = {37, "D1"}; break;
