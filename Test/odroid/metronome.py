@@ -1,29 +1,33 @@
-import odroid_wiringpi as wpi
 import time
-
-# กำหนดหมายเลขขา GPIO สำหรับลำโพง
-SPEAKER_PIN = 18  # เปลี่ยนเป็นหมายเลข GPIO ที่ต่อกับลำโพงของคุณ
+import odroid_wiringpi as wiringpi
 
 # ตั้งค่า WiringPi
-wpi.wiringPiSetupGpio()  # ใช้หมายเลข GPIO แบบ BCM
+wiringpi.wiringPiSetup()
 
-# สร้าง softTone
-wpi.softToneCreate(SPEAKER_PIN)
+# ตั้งค่า buzzer pin (ใช้ softTone)
+buzzer_pin = 0  # GPIO 0
 
-# ตัวอย่างความถี่ (ใน Hz)
-frequencies = [440, 523, 587, 659, 698, 784, 880]  # A4, C5, D5, E5, F5, G5, A5
+# สร้าง softTone บน pin ที่กำหนด
+wiringpi.softToneCreate(buzzer_pin)
 
-# เล่นเสียงแต่ละความถี่
-try:
-    for freq in frequencies:
-        print(f"Playing frequency: {freq} Hz")
-        wpi.softToneWrite(SPEAKER_PIN, freq)  # เล่นความถี่
-        time.sleep(1)  # รอ 1 วินาทีก่อนเปลี่ยนไปยังความถี่ถัดไป
+# ตั้งค่า BPM สำหรับ metronome
+bpm = 120  # จังหวะ 120 BPM
+interval = 60.0 / bpm  # คำนวณเวลาระหว่างจังหวะ (วินาทีต่อจังหวะ)
 
-    # หยุดเสียง
-    wpi.softToneWrite(SPEAKER_PIN, 0)  # หยุดเล่นเสียง
-    print("Sound stopped.")
-except Exception as e:
-    print(f"Error: {e}")
+# ความถี่ของเสียง metronome (ปรับตามความต้องการ)
+frequency = 1000  # ความถี่เสียง (1000 Hz)
 
-print("Program has ended.")
+# เริ่มการทำงาน metronome
+while True:
+    # เปิด buzzer ด้วยความถี่ที่กำหนด
+    wiringpi.softToneWrite(buzzer_pin, frequency)
+    print("Beep!")
+    
+    # รอ 0.1 วินาทีเพื่อให้ buzzer ส่งเสียง
+    time.sleep(0.1)
+
+    # ปิดเสียง (softToneWrite(0) จะหยุดเสียง)
+    wiringpi.softToneWrite(buzzer_pin, 0)
+
+    # รอระยะเวลาระหว่างจังหวะตาม BPM ที่กำหนด
+    time.sleep(interval - 0.1)
