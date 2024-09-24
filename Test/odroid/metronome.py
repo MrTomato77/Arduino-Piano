@@ -1,33 +1,30 @@
 import time
 import odroid_wiringpi as wiringpi
 
-# ตั้งค่า WiringPi
+# Set up WiringPi
 wiringpi.wiringPiSetup()
 
-# ตั้งค่า buzzer pin (ใช้ softTone)
-buzzer_pin = 0  # GPIO 0
+# Set the pin for the passive buzzer
+buzzer_pin = 0  # WiringPi pin 0 (physical pin 11, GPIOX_3)
 
-# สร้าง softTone บน pin ที่กำหนด
+# Create a soft tone on the buzzer pin (for passive buzzers)
 wiringpi.softToneCreate(buzzer_pin)
 
-# ตั้งค่า BPM สำหรับ metronome
-bpm = 120  # จังหวะ 120 BPM
-interval = 60.0 / bpm  # คำนวณเวลาระหว่างจังหวะ (วินาทีต่อจังหวะ)
+# Set the frequency for the buzzer tone (example frequency 1000 Hz)
+frequency = 1000  # Adjust to the desired tone frequency
 
-# ความถี่ของเสียง metronome (ปรับตามความต้องการ)
-frequency = 1000  # ความถี่เสียง (1000 Hz)
-
-# เริ่มการทำงาน metronome
+# Start a loop to turn the buzzer on and off
 while True:
-    # เปิด buzzer ด้วยความถี่ที่กำหนด
+    # Turn the buzzer ON with a tone frequency
     wiringpi.softToneWrite(buzzer_pin, frequency)
-    print("Beep!")
+    print("Buzzer ON with tone")
     
-    # รอ 0.1 วินาทีเพื่อให้ buzzer ส่งเสียง
-    time.sleep(0.1)
+    # Keep the buzzer ON for 1 second
+    time.sleep(1)
 
-    # ปิดเสียง (softToneWrite(0) จะหยุดเสียง)
+    # Turn the buzzer OFF by setting frequency to 0
     wiringpi.softToneWrite(buzzer_pin, 0)
+    print("Buzzer OFF")
 
-    # รอระยะเวลาระหว่างจังหวะตาม BPM ที่กำหนด
-    time.sleep(interval - 0.1)
+    # Keep the buzzer OFF for 1 second
+    time.sleep(1)
