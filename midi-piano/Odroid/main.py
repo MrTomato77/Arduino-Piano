@@ -2,10 +2,10 @@ from uart import setup_uart, read_bpm
 from metronome import setup_buzzer, run_metronome
 
 def main():
-    setup_buzzer(buzzer_pin)
-    uart = setup_uart()
     buzzer_pin = 0
     prev_bpm = None
+    uart = setup_uart()
+    setup_buzzer(buzzer_pin)
 
     while True:
         bpm = read_bpm(uart)
