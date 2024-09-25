@@ -14,7 +14,7 @@ const int maxOctave = 5;
 int currentOctave = 3;
 unsigned long lastIncreaseTime = 0;
 unsigned long lastDecreaseTime = 0;
-const unsigned long debounceOctave = 10;
+const unsigned long debounceOctave = 200;
 
 void setupOctaveButtons() {
     pinMode(buttonIncreasePin, INPUT_PULLUP);

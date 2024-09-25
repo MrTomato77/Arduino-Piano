@@ -14,7 +14,7 @@ const int maxBPM = 300;
 int currentBPM = 120;
 unsigned long lastBpmIncTime = 0;
 unsigned long lastBpmDecTime = 0;
-const unsigned long debounceBPM = 10;
+const unsigned long debounceBPM = 200;
 
 void setupBPMButtons() {
     pinMode(bpmIncPin, INPUT_PULLUP);
