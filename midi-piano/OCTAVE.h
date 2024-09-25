@@ -9,11 +9,11 @@ const int buttonIncreasePin = 16;  // Pin for increase button
 const int buttonDecreasePin = 17;  // Pin for decrease button
 
 // Define octave range limits
-const int minOctave = 1;
+const int minOctave = 0;
 const int maxOctave = 5;
 
 // Variable to store the current octave
-int currentOctave = 2;
+int currentOctave = 3;
 
 // Function to initialize the buttons
 void setupOctaveButtons() {
@@ -30,6 +30,7 @@ int getCurrentOctave() {
 void increaseOctave() {
     if (currentOctave < maxOctave) {
         currentOctave++;
+        delay(100);
     }
 }
 
@@ -37,6 +38,7 @@ void increaseOctave() {
 void decreaseOctave() {
     if (currentOctave > minOctave) {
         currentOctave--;
+        delay(100);
     }
 }
 
