@@ -22,8 +22,9 @@ void setupLCD() {
 void displayOctave(int octave) {
   lcd.setCursor(0, 0); // Set the cursor to the second row
   lcd.print("Octave: ");
+  lcd.print(octave-1);
+  lcd.print(",");    // Clear any trailing characters from previous updates
   lcd.print(octave);
-  lcd.print("   ");    // Clear any trailing characters from previous updates
 }
 
 void displayBPM(int bpm) {
