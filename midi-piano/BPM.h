@@ -28,8 +28,10 @@ int getCurrentBPM() {
 void increaseBPM() {
     if (currentBPM < maxBPM) {
         currentBPM += 5;
-        displayBPM(getCurrentBPM());
+    } else {
+        currentBPM = minBPM;
     }
+    displayBPM(getCurrentBPM());
 }
 
 void decreaseBPM() {
