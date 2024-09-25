@@ -25,7 +25,6 @@ int getCurrentOctave() {
     return currentOctave;
 }
 
-// Function to increase the octave
 void increaseOctave() {
     if (currentOctave < maxOctave) {
         currentOctave++;
