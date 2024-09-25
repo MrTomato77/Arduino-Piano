@@ -19,47 +19,37 @@ wiringpi.pinMode(buzzer_pin, 1)  # OUTPUT mode for buzzer
 # Create a soft tone on the buzzer pin (for passive buzzers)
 wiringpi.softToneCreate(buzzer_pin)
 
-# Minimum and Maximum BPM limits
-min_bpm = 30
-max_bpm = 300
-bpm = 120  # Initialize BPM to a default value
+# Variables to track metronome state
+last_buzz_time = 0
+bpm = 60  # Default BPM
+buzzer_on_duration = 0.1  # Buzzer ON duration in seconds
+interval = 60.0 / bpm  # Calculate the interval between beats
+buzzer_state = False  # Buzzer initially OFF
 
-def read_bpm_from_uart():
+def metronome():
+    global last_buzz_time, bpm, interval, buzzer_state
+
     if uart.in_waiting > 0:  # Check if there is data available
         try:
-            data = uart.readline().decode('utf-8', errors='ignore').strip()  # Read a line from UART
-            return int(data)  # Convert the received data to an integer
+            # Read a line from UART and convert to integer
+            bpm = int(uart.readline().decode('utf-8', errors='ignore').strip())
+            print(f"New BPM received: {bpm}")
+            interval = 60.0 / bpm  # Recalculate interval based on BPM
         except ValueError:
             print("Invalid BPM received.")
-    return None  # Return None if no valid data
 
-# Metronome function
-def metronome():
-    global bpm
-    while True:
-        # Check for incoming BPM from UART
-        new_bpm = read_bpm_from_uart()
-        if new_bpm is not None and min_bpm <= new_bpm <= max_bpm:
-            bpm = new_bpm  # Update BPM if valid
-            print(f"BPM updated from UART: {bpm}")
+    current_time = time.monotonic()  # Get the current time
 
-        interval = 60.0 / bpm  # Calculate the interval between beats
+    if buzzer_state:  # If the buzzer is ON
+        if current_time - last_buzz_time >= buzzer_on_duration:
+            wiringpi.softToneWrite(buzzer_pin, 0)  # Turn the buzzer OFF
+            buzzer_state = False  # Update the state to OFF
+            last_buzz_time = current_time  # Record the time the buzzer was turned off
+    else:  # If the buzzer is OFF
+        if current_time - last_buzz_time >= interval:
+            wiringpi.softToneWrite(buzzer_pin, 1000)  # Turn the buzzer ON with 1000 Hz tone
+            buzzer_state = True  # Update the state to ON
+            last_buzz_time = current_time  # Record the time the buzzer was turned on
 
-        # Turn the buzzer ON with the tone frequency
-        wiringpi.softToneWrite(buzzer_pin, 1000)  # 1000 Hz tone
-        print(f"Buzzer ON with {bpm} BPM")
-
-        # Keep the buzzer ON for a fraction of the interval
-        time.sleep(0.3)  # Duration for the beep sound
-
-        # Turn the buzzer OFF
-        wiringpi.softToneWrite(buzzer_pin, 0)
-        print("Buzzer OFF")
-
-        # Calculate remaining time for the sleep, ensuring it is non-negative
-        remaining_sleep = interval - 0.3
-        if remaining_sleep > 0:
-            time.sleep(remaining_sleep)  # Sleep only if remaining time is positive
-
-# Start the metronome
-metronome()
+while True:
+    metronome()
