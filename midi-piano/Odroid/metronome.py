@@ -3,22 +3,16 @@ import odroid_wiringpi as wiringpi
 import time
 
 def setup_buzzer(pin=0):
-    """
-    Setup the buzzer pin.
-    :param pin: WiringPi pin number
-    """
     wiringpi.wiringPiSetup()
     wiringpi.pinMode(pin, 1)  # Set pin to OUTPUT mode
-    wiringpi.softToneCreate(pin)  # Create a soft tone on the pin
+    wiringpi.softToneCreate(pin)
 
 def run_metronome(bpm, buzzer_pin=0):
-    """
-    Run the metronome based on BPM value.
-    :param bpm: Beats per minute
-    :param buzzer_pin: Pin number for the buzzer
-    """
+
     if bpm is None:
-        return
+        return 
+    elif bpm <= 0:
+        bpm = 1
     
     print(f"Buzzer ON with {bpm} BPM")
     interval = 60.0 / bpm  # Calculate the interval time in seconds
