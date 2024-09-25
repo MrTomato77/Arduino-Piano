@@ -5,8 +5,8 @@
 #include "I2C_LCD.h"
 
 // Define pins for buttons
-const int buttonIncreasePin = 3;  // Pin for increase button
-const int buttonDecreasePin = 4;  // Pin for decrease button
+const int buttonIncreasePin = 16;  // Pin for increase button
+const int buttonDecreasePin = 17;  // Pin for decrease button
 
 // Define octave range limits
 const int minOctave = 1;
@@ -46,14 +46,12 @@ void checkOctaveButtons() {
     if (digitalRead(buttonIncreasePin) == LOW) {
         increaseOctave();            // Increase the octave
         displayOctave(getCurrentOctave());  // Update the LCD display with the new octave
-        delay(200);  // Debounce delay
     }
 
     // Check if the decrease button is pressed
     if (digitalRead(buttonDecreasePin) == LOW) {
         decreaseOctave();            // Decrease the octave
         displayOctave(getCurrentOctave());  // Update the LCD display with the new octave
-        delay(200);  // Debounce delay
     }
 }
 

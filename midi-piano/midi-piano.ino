@@ -1,10 +1,8 @@
 #include <PCF8574.h>
 #include <MIDI.h>
-#include "OCTAVE.h"
 #include "buzzerKeys.h"
-
-// Pin definitions
-#define BUZZER_PIN 8
+#include "OCTAVE.h"
+#include "BPM.h"
 
 // Midi init
 MIDI_CREATE_DEFAULT_INSTANCE();
@@ -17,22 +15,6 @@ PCF8574 PCF1(0x20);
 PCF8574 PCF2(0x21);
 PCF8574 PCF3(0x22);
 
-void setupPinMode() {
-  pinMode(BUZZER_PIN, OUTPUT);
-}
-
-void setup() {
-  setupPinMode();
-  setupOctaveButtons();
-  MIDI.begin(MIDI_CHANNEL_OMNI);
-  Serial.begin(115200);
-  PCF1.begin();
-  PCF2.begin();
-  PCF3.begin();
-  setupLCD();
-  displayOctave(getCurrentOctave());
-}
-
 void playNoteOnBuzzer(int buzzerNote) {
   BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
   if (noteInfo.frequency > 0) {
@@ -40,10 +22,6 @@ void playNoteOnBuzzer(int buzzerNote) {
   } else {
     noTone(BUZZER_PIN);
   }
-}
-
-void stopNoteOnBuzzer() {
-  noTone(BUZZER_PIN);
 }
 
 void printBuzzerNote(int buzzerNote) {
@@ -72,7 +50,6 @@ void checkKey1(int key) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
-      delay(200);
     } else {
       stopNoteOnBuzzer();
       MIDI.sendNoteOff(midiNote, 0, 1);
@@ -94,7 +71,6 @@ void checkKey2(int key) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
-      delay(200);
     } else {
       stopNoteOnBuzzer();
       MIDI.sendNoteOff(midiNote, 0, 1);
@@ -116,7 +92,6 @@ void checkKey3(int key) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
-      delay(200);
     } else {
       stopNoteOnBuzzer();
       MIDI.sendNoteOff(midiNote, 0, 1);
@@ -124,8 +99,25 @@ void checkKey3(int key) {
   }
 }
 
+void setup() {
+  Serial.begin(115200);
+
+  MIDI.begin(MIDI_CHANNEL_OMNI);
+  PCF1.begin();
+  PCF2.begin();
+  PCF3.begin();
+
+  setupBuzzer();
+  setupBPMButtons();
+  setupOctaveButtons();
+  setupLCD();
+  displayOctave(getCurrentOctave());
+  displayBPM(getCurrentBPM());
+}
+
 void loop() {
   checkOctaveButtons();
+  checkBPMButtons();
   for (int i = 0; i < 8; ++i) {
     checkKey1(i);
     checkKey2(i);

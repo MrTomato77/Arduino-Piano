@@ -6,8 +6,8 @@
 #include "metronome.h"      // Include metronome.h to access currentBPM
 
 // Define RX and TX pins for SoftwareSerial
-const int rxPin = 10; // Choose a pin for receiving data
-const int txPin = 11; // Choose a pin for transmitting data
+const int rxPin = 2; // Choose a pin for receiving data
+const int txPin = 1; // Choose a pin for transmitting data
 SoftwareSerial mySerial(rxPin, txPin); // Create a SoftwareSerial object
 
 void setupUART() {

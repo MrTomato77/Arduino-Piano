@@ -9,6 +9,16 @@ struct BuzzerNote {
     const char* name;
 };
 
+const int BUZZER_PIN = 2; // Choose a pin for receiving data
+
+void setupBuzzer() {
+    pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void stopNoteOnBuzzer() {
+  noTone(BUZZER_PIN);
+}
+
 // Function to get the frequency and name of a given buzzer note
 BuzzerNote getBuzzerNoteInfo(int Note) {
     BuzzerNote noteInfo;

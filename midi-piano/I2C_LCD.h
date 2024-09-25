@@ -20,14 +20,14 @@ void setupLCD() {
 
 // Function to update the octave display on the LCD
 void displayOctave(int octave) {
-  lcd.setCursor(0, 1); // Set the cursor to the second row
+  lcd.setCursor(0, 0); // Set the cursor to the second row
   lcd.print("Octave: ");
   lcd.print(octave);
   lcd.print("   ");    // Clear any trailing characters from previous updates
 }
 
 void displayBPM(int bpm) {
-  lcd.setCursor(0, 0); // Set the cursor to the second row
+  lcd.setCursor(0, 1); // Set the cursor to the second row
   lcd.print("BPM: ");
   lcd.print(bpm);
   lcd.print("   ");    // Clear any trailing characters from previous updates
