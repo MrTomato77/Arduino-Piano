@@ -29,7 +29,7 @@ int getCurrentBPM() {
 // Function to increase the BPM
 void increaseBPM() {
     if (currentBPM < maxBPM) {
-        currentBPM++;
+        currentBPM+=5;
         delay(100);
     }
 }
@@ -37,7 +37,7 @@ void increaseBPM() {
 // Function to decrease the BPM
 void decreaseBPM() {
     if (currentBPM > minBPM) {
-        currentBPM--;
+        currentBPM-=5;
         delay(100);
     }
 }

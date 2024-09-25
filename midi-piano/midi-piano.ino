@@ -3,6 +3,7 @@
 #include "buzzerKeys.h"
 #include "OCTAVE.h"
 #include "BPM.h"
+#include "UART.h"
 
 boolean ButtonWasPressed1[] = { false, false, false, false, false, false, false, false };
 boolean ButtonWasPressed2[] = { false, false, false, false, false, false, false, false };
@@ -22,7 +23,8 @@ void setup() {
   setupBuzzer();
   setupBPMButtons();
   setupOctaveButtons();
-  
+  setupUART();
+
   setupLCD();
   displayOctave(getCurrentOctave());
   displayBPM(getCurrentBPM());
@@ -97,6 +99,7 @@ void checkKey3(int key) {
 void loop() {
   checkOctaveButtons();
   checkBPMButtons();
+  sendCurrentBPM();
   for (int i = 0; i < 8; ++i) {
     checkKey1(i);
     checkKey2(i);
