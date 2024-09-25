@@ -72,7 +72,7 @@ void checkKey1(int key) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
-      displayKeyPressed(noteInfo.name);
+      delay(200);
     } else {
       stopNoteOnBuzzer();
       MIDI.sendNoteOff(midiNote, 0, 1);
@@ -94,7 +94,7 @@ void checkKey2(int key) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
-      displayKeyPressed(noteInfo.name);
+      delay(200);
     } else {
       stopNoteOnBuzzer();
       MIDI.sendNoteOff(midiNote, 0, 1);
@@ -116,7 +116,7 @@ void checkKey3(int key) {
       // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
-      displayKeyPressed(noteInfo.name);
+      delay(200);
     } else {
       stopNoteOnBuzzer();
       MIDI.sendNoteOff(midiNote, 0, 1);
