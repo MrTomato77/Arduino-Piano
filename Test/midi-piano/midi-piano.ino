@@ -4,7 +4,7 @@
 #include "buzzerKeys.h"
 
 // Pin definitions
-#define BUZZER_PIN 8  // Ensure this is a PWM-capable pin on your board
+#define BUZZER_PIN 8
 
 // Midi init
 MIDI_CREATE_DEFAULT_INSTANCE();
@@ -17,15 +17,8 @@ PCF8574 PCF1(0x20);
 PCF8574 PCF2(0x21);
 PCF8574 PCF3(0x22);
 
-// Potentiometer for volume control
-int volumePotPin = A0;  // Potentiometer connected to A0
-int lastVolumeValue = 0;  // To store the last volume value
-const int volumeThreshold = 2;  // Only update volume if change is significant
-int currentVolume = 0;  // Stores the current volume value from potentiometer
-
 void setupPinMode() {
   pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(volumePotPin, INPUT);
 }
 
 void setup() {
@@ -36,39 +29,32 @@ void setup() {
   PCF1.begin();
   PCF2.begin();
   PCF3.begin();
+  setupLCD();
+  displayOctave(getCurrentOctave());
 }
 
-// Function to play note on buzzer with given frequency and volume
 void playNoteOnBuzzer(int buzzerNote) {
   BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
   if (noteInfo.frequency > 0) {
-    // Modulate tone based on the volume (duty cycle)
-    analogWrite(BUZZER_PIN, currentVolume);  // Adjust PWM output to control volume
-    tone(BUZZER_PIN, noteInfo.frequency);  // Generate tone with the desired frequency
+    tone(BUZZER_PIN, noteInfo.frequency);
   } else {
     noTone(BUZZER_PIN);
   }
 }
 
-// Function to stop the buzzer
 void stopNoteOnBuzzer() {
   noTone(BUZZER_PIN);
-  analogWrite(BUZZER_PIN, 0);  // Turn off the PWM signal to ensure silence
 }
 
-// Function to read and adjust the buzzer volume using the potentiometer
-void adjustBuzzerVolume() {
-  // Read the potentiometer value (0-1023)
-  int potValue = analogRead(volumePotPin);
-
-  // Map the potentiometer value to a volume range (0-255 for PWM duty cycle)
-  currentVolume = map(potValue, 0, 1023, 0, 255);
-
-  // Only update if the volume change is significant
-  if (abs(currentVolume - lastVolumeValue) > volumeThreshold) {
-    lastVolumeValue = currentVolume;
-    //Serial.print("Adjusted Volume: ");
-    //Serial.println(currentVolume);
+void printBuzzerNote(int buzzerNote) {
+  BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
+  if (noteInfo.frequency > 0) {
+    Serial.print("Note: ");
+    Serial.print(noteInfo.name);
+    Serial.print(", Frequency: ");
+    Serial.println(noteInfo.frequency);
+  } else {
+    Serial.println("Invalid note");
   }
 }
 
@@ -81,9 +67,9 @@ void checkKey1(int key) {
     ButtonWasPressed1[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
     int buzzerNote = 1 + (12 * getCurrentOctave()) + key;
-    int midiNote = 24 + (12 * getCurrentOctave()) + key;
+    int midiNote = 24 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed1[key]) {
-      //printBuzzerNote(buzzerNote);
+      // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
       delay(200);
@@ -103,9 +89,9 @@ void checkKey2(int key) {
     ButtonWasPressed2[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
     int buzzerNote = 9 + (12 * getCurrentOctave()) + key;
-    int midiNote = 32 + (12 * getCurrentOctave()) + key;
+    int midiNote = 32 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed2[key]) {
-      //printBuzzerNote(buzzerNote);
+      // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
       delay(200);
@@ -125,9 +111,9 @@ void checkKey3(int key) {
     ButtonWasPressed3[key] = buttonIsPressed;
     ButtonStateChangeTime = currentTime;
     int buzzerNote = 17 + (12 * getCurrentOctave()) + key;
-    int midiNote = 40 + (12 * getCurrentOctave()) + key;
+    int midiNote = 40 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed3[key]) {
-      //printBuzzerNote(buzzerNote);
+      // printBuzzerNote(buzzerNote);
       playNoteOnBuzzer(buzzerNote);
       MIDI.sendNoteOn(midiNote, 127, 1);
       delay(200);
@@ -139,7 +125,6 @@ void checkKey3(int key) {
 }
 
 void loop() {
-  adjustBuzzerVolume();
   checkOctaveButtons();
   for (int i = 0; i < 8; ++i) {
     checkKey1(i);
