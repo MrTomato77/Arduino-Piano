@@ -8,20 +8,19 @@
 const int buttonIncreasePin = 16;  // Pin for increase button
 const int buttonDecreasePin = 17;  // Pin for decrease button
 
-// Define octave range limits
+// Define octave
 const int minOctave = 0;
 const int maxOctave = 5;
-
-// Variable to store the current octave
 int currentOctave = 3;
+unsigned long lastIncreaseTime = 0;
+unsigned long lastDecreaseTime = 0;
+const unsigned long debounceDelay = 100;
 
-// Function to initialize the buttons
 void setupOctaveButtons() {
     pinMode(buttonIncreasePin, INPUT_PULLUP);
     pinMode(buttonDecreasePin, INPUT_PULLUP);
 }
 
-// Function to get the current octave value
 int getCurrentOctave() {
     return currentOctave;
 }
@@ -30,30 +29,32 @@ int getCurrentOctave() {
 void increaseOctave() {
     if (currentOctave < maxOctave) {
         currentOctave++;
-        delay(100);
+        displayOctave(getCurrentOctave());
     }
 }
 
-// Function to decrease the octave
 void decreaseOctave() {
     if (currentOctave > minOctave) {
         currentOctave--;
-        delay(100);
+    } else {
+        currentOctave = minOctave;
     }
+    displayOctave(getCurrentOctave());
 }
 
-// Function to check for button presses to increase or decrease octave
 void checkOctaveButtons() {
-    // Check if the increase button is pressed
+    unsigned long currentMillis = millis();
     if (digitalRead(buttonIncreasePin) == LOW) {
-        increaseOctave();            // Increase the octave
-        displayOctave(getCurrentOctave());  // Update the LCD display with the new octave
+        if (currentMillis - lastIncreaseTime > debounceDelay) {
+            increaseOctave();
+            lastIncreaseTime = currentMillis;
+        }
     }
-
-    // Check if the decrease button is pressed
     if (digitalRead(buttonDecreasePin) == LOW) {
-        decreaseOctave();            // Decrease the octave
-        displayOctave(getCurrentOctave());  // Update the LCD display with the new octave
+        if (currentMillis - lastDecreaseTime > debounceDelay) {
+            decreaseOctave();
+            lastDecreaseTime = currentMillis;
+        }
     }
 }
 
