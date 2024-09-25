@@ -1,12 +1,24 @@
-import odroid_wiringpi as wpi
+import serial
 
-# ตั้งค่า GPIO pin ตาม WiringPi
-wpi.wiringPiSetup()
+# Configure the UART port
+uart_port = '/dev/ttyS1'  # Replace with the correct UART port for your system
+uart_baudrate = 115200
+uart = serial.Serial(uart_port, uart_baudrate, timeout=1)
 
-# ตั้งค่า pin 1 (Physical Pin 12 / GPIO 492) เป็น input สำหรับปุ่มกด
-wpi.pinMode(1, 0)  # 0 หมายถึง input
 
+def read_bpm_from_uart():
+    if uart.in_waiting > 0:  # Check if there is data available
+        try:
+            data = uart.readline().decode('utf-8', errors='ignore').strip()  # Read a line from UART
+            print(data)
+            return int(data)  # Convert the received data to an integer
+        except ValueError:
+            print("Invalid BPM received.")
+    return None  # Return None if no valid data
+
+read_bpm_from_uart()
+
+
+# Main loop to read data from Arduino
 while True:
-    button_state = wpi.digitalRead(1)  # อ่านค่าจากปุ่ม
-    if button_state == 0:  # ถ้าปุ่มถูกกด (ปุ่มกดมีการเชื่อมต่อแบบ pull-down)
-        print("button_ok")
+    read_bpm_from_uart()
