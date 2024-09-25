@@ -11,8 +11,8 @@ def run_metronome(bpm, buzzer_pin=0):
 
     if bpm is None:
         return 
-    elif bpm <= 0:
-        bpm = 1
+    elif bpm < 10:
+        bpm = 300
     
     print(f"Buzzer ON with {bpm} BPM")
     interval = 60.0 / bpm  # Calculate the interval time in seconds
