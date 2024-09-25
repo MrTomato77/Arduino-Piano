@@ -5,20 +5,20 @@
 #include "I2C_LCD.h"
 
 // Define pins for buttons
-const int buttonIncreasePin = 14;  // Pin for increase button
-const int buttonDecreasePin = 15;  // Pin for decrease button
+const int bpmIncPin = 14;  // Pin for increase button
+const int bpmDecPin = 15;  // Pin for decrease button
 
 // Define BPM range limits
-const int minBPM = 1;
-const int maxBPM = 5;
+const int minBPM = 10;
+const int maxBPM = 500;
 
 // Variable to store the current BPM
-int currentBPM = 2;
+int currentBPM = 120;
 
 // Function to initialize the buttons
 void setupBPMButtons() {
-    pinMode(buttonIncreasePin, INPUT_PULLUP);
-    pinMode(buttonDecreasePin, INPUT_PULLUP);
+    pinMode(bpmIncPin, INPUT_PULLUP);
+    pinMode(bpmDecPin, INPUT_PULLUP);
 }
 
 // Function to get the current BPM value
@@ -30,6 +30,7 @@ int getCurrentBPM() {
 void increaseBPM() {
     if (currentBPM < maxBPM) {
         currentBPM++;
+        delay(100);
     }
 }
 
@@ -37,19 +38,20 @@ void increaseBPM() {
 void decreaseBPM() {
     if (currentBPM > minBPM) {
         currentBPM--;
+        delay(100);
     }
 }
 
 // Function to check for button presses to increase or decrease BPM
 void checkBPMButtons() {
     // Check if the increase button is pressed
-    if (digitalRead(buttonIncreasePin) == LOW) {
+    if (digitalRead(bpmIncPin) == LOW) {
         increaseBPM();            // Increase the BPM
         displayBPM(getCurrentBPM());  // Update the LCD display with the new BPM
     }
 
     // Check if the decrease button is pressed
-    if (digitalRead(buttonDecreasePin) == LOW) {
+    if (digitalRead(bpmDecPin) == LOW) {
         decreaseBPM();            // Decrease the BPM
         displayBPM(getCurrentBPM());  // Update the LCD display with the new BPM
     }
