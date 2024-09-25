@@ -14,7 +14,7 @@ const int maxOctave = 5;
 int currentOctave = 3;
 unsigned long lastIncreaseTime = 0;
 unsigned long lastDecreaseTime = 0;
-const unsigned long debounceDelay = 100;
+const unsigned long debounceOctave = 10;
 
 void setupOctaveButtons() {
     pinMode(buttonIncreasePin, INPUT_PULLUP);
@@ -44,13 +44,13 @@ void decreaseOctave() {
 void checkOctaveButtons() {
     unsigned long currentMillis = millis();
     if (digitalRead(buttonIncreasePin) == LOW) {
-        if (currentMillis - lastIncreaseTime > debounceDelay) {
+        if (currentMillis - lastIncreaseTime > debounceOctave) {
             increaseOctave();
             lastIncreaseTime = currentMillis;
         }
     }
     if (digitalRead(buttonDecreasePin) == LOW) {
-        if (currentMillis - lastDecreaseTime > debounceDelay) {
+        if (currentMillis - lastDecreaseTime > debounceOctave) {
             decreaseOctave();
             lastDecreaseTime = currentMillis;
         }

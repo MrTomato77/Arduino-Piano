@@ -14,7 +14,7 @@ const int maxBPM = 300;
 int currentBPM = 120;
 unsigned long lastBpmIncTime = 0;
 unsigned long lastBpmDecTime = 0;
-const unsigned long debounceDelay = 100;
+const unsigned long debounceBPM = 10;
 
 void setupBPMButtons() {
     pinMode(bpmIncPin, INPUT_PULLUP);
@@ -44,13 +44,13 @@ void decreaseBPM() {
 void checkBPMButtons() {
     unsigned long currentMillis = millis();
     if (digitalRead(bpmIncPin) == LOW) {
-        if (currentMillis - lastBpmIncTime > debounceDelay) {
+        if (currentMillis - lastBpmIncTime > debounceBPM) {
             increaseBPM();
             lastBpmIncTime = currentMillis;
         }
     }
     if (digitalRead(bpmDecPin) == LOW) {
-        if (currentMillis - lastBpmDecTime > debounceDelay) {
+        if (currentMillis - lastBpmDecTime > debounceBPM) {
             decreaseBPM();
             lastBpmDecTime = currentMillis;
         }
