@@ -113,4 +113,25 @@ BuzzerNote getBuzzerNoteInfo(int Note) {
     return noteInfo;
 }
 
+void playNoteOnBuzzer(int buzzerNote) {
+  BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
+  if (noteInfo.frequency > 0) {
+    tone(BUZZER_PIN, noteInfo.frequency);
+  } else {
+    noTone(BUZZER_PIN);
+  }
+}
+
+void printBuzzerNote(int buzzerNote) {
+  BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
+  if (noteInfo.frequency > 0) {
+    Serial.print("Note: ");
+    Serial.print(noteInfo.name);
+    Serial.print(", Frequency: ");
+    Serial.println(noteInfo.frequency);
+  } else {
+    Serial.println("Invalid note");
+  }
+}
+
 #endif

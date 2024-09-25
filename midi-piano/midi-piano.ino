@@ -4,9 +4,6 @@
 #include "OCTAVE.h"
 #include "BPM.h"
 
-// Midi init
-MIDI_CREATE_DEFAULT_INSTANCE();
-
 boolean ButtonWasPressed1[] = { false, false, false, false, false, false, false, false };
 boolean ButtonWasPressed2[] = { false, false, false, false, false, false, false, false };
 boolean ButtonWasPressed3[] = { false, false, false, false, false, false, false, false };
@@ -15,30 +12,28 @@ PCF8574 PCF1(0x20);
 PCF8574 PCF2(0x21);
 PCF8574 PCF3(0x22);
 
-void playNoteOnBuzzer(int buzzerNote) {
-  BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
-  if (noteInfo.frequency > 0) {
-    tone(BUZZER_PIN, noteInfo.frequency);
-  } else {
-    noTone(BUZZER_PIN);
-  }
-}
+MIDI_CREATE_DEFAULT_INSTANCE();
 
-void printBuzzerNote(int buzzerNote) {
-  BuzzerNote noteInfo = getBuzzerNoteInfo(buzzerNote);
-  if (noteInfo.frequency > 0) {
-    Serial.print("Note: ");
-    Serial.print(noteInfo.name);
-    Serial.print(", Frequency: ");
-    Serial.println(noteInfo.frequency);
-  } else {
-    Serial.println("Invalid note");
-  }
+void setup() {
+  PCF1.begin();
+  PCF2.begin();
+  PCF3.begin();
+
+  setupBuzzer();
+  setupBPMButtons();
+  setupOctaveButtons();
+  
+  setupLCD();
+  displayOctave(getCurrentOctave());
+  displayBPM(getCurrentBPM());
+
+  MIDI.begin(MIDI_CHANNEL_OMNI);
+  Serial.begin(115200);
 }
 
 void checkKey1(int key) {
   unsigned long currentTime = millis();
-  const unsigned long DebounceTime = 10;
+  const unsigned long DebounceTime = 5;
   static unsigned long ButtonStateChangeTime = 0;
   boolean buttonIsPressed = PCF1.readButton(key) == LOW;
   if (buttonIsPressed != ButtonWasPressed1[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
@@ -59,7 +54,7 @@ void checkKey1(int key) {
 
 void checkKey2(int key) {
   unsigned long currentTime = millis();
-  const unsigned long DebounceTime = 10;
+  const unsigned long DebounceTime = 5;
   static unsigned long ButtonStateChangeTime = 0;
   boolean buttonIsPressed = PCF2.readButton(key) == LOW;
   if (buttonIsPressed != ButtonWasPressed2[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
@@ -80,7 +75,7 @@ void checkKey2(int key) {
 
 void checkKey3(int key) {
   unsigned long currentTime = millis();
-  const unsigned long DebounceTime = 10;
+  const unsigned long DebounceTime = 5;
   static unsigned long ButtonStateChangeTime = 0;
   boolean buttonIsPressed = PCF3.readButton(key) == LOW;
   if (buttonIsPressed != ButtonWasPressed3[key] && currentTime - ButtonStateChangeTime > DebounceTime) {
@@ -97,22 +92,6 @@ void checkKey3(int key) {
       MIDI.sendNoteOff(midiNote, 0, 1);
     }
   }
-}
-
-void setup() {
-  Serial.begin(115200);
-
-  MIDI.begin(MIDI_CHANNEL_OMNI);
-  PCF1.begin();
-  PCF2.begin();
-  PCF3.begin();
-
-  setupBuzzer();
-  setupBPMButtons();
-  setupOctaveButtons();
-  setupLCD();
-  displayOctave(getCurrentOctave());
-  displayBPM(getCurrentBPM());
 }
 
 void loop() {
