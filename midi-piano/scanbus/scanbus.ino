@@ -2,7 +2,7 @@
 
 void setup() {
   Wire.begin(); // Start the I2C bus
-  Serial.begin(9600); // Start the Serial communication at 9600 baud rate
+  Serial.begin(115200); // Start the Serial communication at 9600 baud rate
   while (!Serial); // Wait for Serial to initialize
   Serial.println("I2C Scanner Ready. Scanning...");
 }

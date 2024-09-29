@@ -9,7 +9,7 @@ struct BuzzerNote {
     const char* name;
 };
 
-const int BUZZER_PIN = 2; // Choose a pin for receiving data
+const int BUZZER_PIN = 3 ; // Choose a pin for receiving data
 
 void setupBuzzer() {
     pinMode(BUZZER_PIN, OUTPUT);
