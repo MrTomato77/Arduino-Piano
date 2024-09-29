@@ -1,5 +1,0 @@
-pillow
-luma.core
-pyFluidSynth
-odroid-wiringpi
-pcf8574
