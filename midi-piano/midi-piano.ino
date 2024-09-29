@@ -15,6 +15,9 @@ PCF8574 PCF3(0x22);
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
+unsigned long buttonPressTime = 0;  // Time when the button is pressed
+unsigned long soundStartTime = 0;   // Time when the sound starts playing
+
 void setup() {
   PCF1.begin();
   PCF2.begin();
@@ -34,7 +37,7 @@ void setup() {
 }
 
 void checkKey1(int key) {
-  unsigned long currentTime = millis();
+  unsigned long currentTime = micros();
   const unsigned long DebounceTime = 5;
   static unsigned long ButtonStateChangeTime = 0;
   boolean buttonIsPressed = PCF1.readButton(key) == LOW;
@@ -44,8 +47,14 @@ void checkKey1(int key) {
     int buzzerNote = 1 + (12 * getCurrentOctave()) + key;
     int midiNote = 24 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed1[key]) {
-      // printBuzzerNote(buzzerNote);
+      // Capture the time when the button is pressed
+      buttonPressTime = micros();
       playNoteOnBuzzer(buzzerNote);
+      // printBuzzerNote(buzzerNote);
+      soundStartTime = micros();
+      // Print the time it took from button press to sound starting
+      Serial.print("Time from button press to sound (ms): ");
+      Serial.println(soundStartTime - buttonPressTime);
       MIDI.sendNoteOn(midiNote, 127, 1);
     } else {
       stopNoteOnBuzzer();
@@ -55,7 +64,7 @@ void checkKey1(int key) {
 }
 
 void checkKey2(int key) {
-  unsigned long currentTime = millis();
+  unsigned long currentTime = micros();
   const unsigned long DebounceTime = 5;
   static unsigned long ButtonStateChangeTime = 0;
   boolean buttonIsPressed = PCF2.readButton(key) == LOW;
@@ -65,8 +74,14 @@ void checkKey2(int key) {
     int buzzerNote = 9 + (12 * getCurrentOctave()) + key;
     int midiNote = 32 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed2[key]) {
-      // printBuzzerNote(buzzerNote);
+      // Capture the time when the button is pressed
+      buttonPressTime = micros();
       playNoteOnBuzzer(buzzerNote);
+      // printBuzzerNote(buzzerNote);
+      soundStartTime = micros();
+      // Print the time it took from button press to sound starting
+      Serial.print("Time from button press to sound (ms): ");
+      Serial.println(soundStartTime - buttonPressTime);
       MIDI.sendNoteOn(midiNote, 127, 1);
     } else {
       stopNoteOnBuzzer();
@@ -76,7 +91,7 @@ void checkKey2(int key) {
 }
 
 void checkKey3(int key) {
-  unsigned long currentTime = millis();
+  unsigned long currentTime = micros();
   const unsigned long DebounceTime = 5;
   static unsigned long ButtonStateChangeTime = 0;
   boolean buttonIsPressed = PCF3.readButton(key) == LOW;
@@ -86,8 +101,14 @@ void checkKey3(int key) {
     int buzzerNote = 17 + (12 * getCurrentOctave()) + key;
     int midiNote = 40 + (12 * getCurrentOctave()) + key;;
     if (ButtonWasPressed3[key]) {
-      // printBuzzerNote(buzzerNote);
+      // Capture the time when the button is pressed
+      buttonPressTime = micros();
       playNoteOnBuzzer(buzzerNote);
+      // printBuzzerNote(buzzerNote);
+      soundStartTime = micros();
+      // Print the time it took from button press to sound starting
+      Serial.print("Time from button press to sound (ms): ");
+      Serial.println(soundStartTime - buttonPressTime);
       MIDI.sendNoteOn(midiNote, 127, 1);
     } else {
       stopNoteOnBuzzer();
